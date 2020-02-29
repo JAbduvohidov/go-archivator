@@ -52,18 +52,15 @@ func sequencedArchivator(fileNames []string) {
 
 func concurrentArchivator(fileNames []string) {
 	waitGroup := sync.WaitGroup{}
-	mutex := sync.Mutex{}
 	for _, fileName := range fileNames {
 		fName := fileName
 		waitGroup.Add(1)
-		go func(wg *sync.WaitGroup, fileName string, mu *sync.Mutex) {
+		go func(wg *sync.WaitGroup, fileName string) {
 			defer func() {
-				mu.Lock()
 				waitGroup.Done()
-				mu.Unlock()
 			}()
 			archive(fName)
-		}(&waitGroup, fileName, &mutex)
+		}(&waitGroup, fileName)
 	}
 	waitGroup.Wait()
 }
